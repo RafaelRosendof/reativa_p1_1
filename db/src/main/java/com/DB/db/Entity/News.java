@@ -1,10 +1,16 @@
-package com.llm.llmReativa.db.Entity;
+package com.DB.db.Entity;
 
 import javax.annotation.processing.Generated;
 
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
-
+import jakarta.persistence.GenerationType;
 
 
 @Entity
@@ -27,15 +33,20 @@ public class News {
     @Column(name = "url")
     private String url;
 
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "stock_id" , referencedColumnName = "id")
+    private Stocks stock;
+
     public News() {
     }
 
-    public News(int id , String font, String title, String description, String url) {
+    public News(int id , String font, String title, String description, String url , Stocks stock) {
         this.id = id;
         this.font = font;
         this.title = title;
         this.description = description;
         this.url = url;
+        this.stock = stock;
     }
 
     public String getFont() {
@@ -64,6 +75,14 @@ public class News {
     }
     public void setUrl(String url) {
         this.url = url;
+    }
+
+    public Stocks getStock() {
+        return stock;
+    }
+
+    public void setStock(Stocks stock) {
+        this.stock = stock;
     }
 
     @Override

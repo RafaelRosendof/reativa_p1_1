@@ -1,30 +1,45 @@
-package main.java.com.llm.llmReativa.prompt;
+//package main.java.com.llm.llmReativa.prompt;
+
+package com.llm.llmReativa.prompt;
 
 import java.util.List;
+import org.springframework.stereotype.Service;
 
+@Service 
 public class PromptService {
 
-
-    public PromptService() {
-
-    }
-
-    public String gerarPrompt(List<String> topics , List<Double> stocks ) {
-        StringBuilder prompt = new StringBuilder("""
-
-        Here it's gonna be a english prompt for analyzing stock market data. based on the following topics and stock prices:
-        Topics:
-        The news about the last week of the top 3 most searchs stocks in our system.
-        Stocks:
-        the price of open and close of the last 7 days of the top 3 most searchs stocks in our system.
-
-        """);
-        for (int i = 0; i < topics.size(); i++) {
-            prompt.append("Topic ").append(i + 1).append(": ").append(topics.get(i)).append("\n");
+   
+    public String gerarPrompt(List<String> topics, List<Double> stocks) {
+        StringBuilder prompt = new StringBuilder();
+        
+        prompt.append("You are a financial analyst AI. Analyze the following stock market data and provide insights:\n\n");
+        
+        
+        if (topics != null && !topics.isEmpty()) {
+            prompt.append("Recent News Topics:\n");
+            for (int i = 0; i < topics.size(); i++) {
+                prompt.append(String.format("%d. %s\n", i + 1, topics.get(i)));
+            }
+            prompt.append("\n");
         }
-        for (int i = 0; i < stocks.size(); i++) {
-            prompt.append("Stock ").append(i + 1).append(": ").append(stocks.get(i)).append("\n");
+        
+        
+        if (stocks != null && !stocks.isEmpty()) {
+            prompt.append("Stock Prices (last 7 days):\n");
+            for (int i = 0; i < stocks.size(); i++) {
+                prompt.append(String.format("Stock %d: $%.2f\n", i + 1, stocks.get(i)));
+            }
+            prompt.append("\n");
         }
+        
+        prompt.append("Please provide:\n");
+        prompt.append("1. Market sentiment analysis\n");
+        prompt.append("2. Key trends and patterns\n");
+        prompt.append("3. Risk assessment\n");
+        prompt.append("4. Investment recommendations\n");
+        
         return prompt.toString();
     }
+
+
 }
