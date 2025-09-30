@@ -2,18 +2,30 @@ package com.DB.db.DAO;
 
 import java.util.List;
 
-import org.springframework.data.jpa.repository.JpaRepository;
+
+import org.springframework.data.repository.reactive.ReactiveCrudRepository;
+import org.springframework.stereotype.Repository;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
+
 import com.DB.db.Entity.News;
 import com.DB.db.Entity.Stocks;
 
-public interface NewsInterface extends JpaRepository<News , Integer> {
+@Repository
+public interface NewsInterface extends ReactiveCrudRepository<News, Integer> {
 
     /*
      * basic crud
      */
     
-    News findByStockId(int stockId);
-    List<News> findAll();
-    List<News> findByTitle(String title);
-    List<News> findByStock(Stocks stock);
+    Mono<News> findByStockID(int id);
+
+    Mono<News> findByTitle(String title);
+
+    Flux<News> findAllByStockId(int stockId);
+
+    // more latter
+
+
+    
 }

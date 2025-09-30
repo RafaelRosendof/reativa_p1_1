@@ -1,52 +1,48 @@
 package com.DB.db.Entity;
 
 
+import org.springframework.data.annotation.Id;
+import org.springframework.data.relational.core.mapping.Column;
+import org.springframework.data.relational.core.mapping.Table;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToOne;
-import jakarta.persistence.Table;
 
-@Entity
-@Table(name = "stocks")
+
+@Table("stocks")
 public class Stocks {
 
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @Column(name = "name")
+    @Column("name")
     private String name;
 
-    @Column(name = "open_price")
+    @Column("open_price")
     private double openPrice;
 
-    @Column(name = "close_price")
+    @Column("close_price")
     private double closePrice;
 
-    @Column(name = "high_price")
+    @Column("high_price")
     private double highPrice;
 
-    @Column(name = "date")
+    @Column("date")
     private String date;
 
-    @OneToOne(mappedBy = "stock")
-    private News news;
+    @Column("news_id")
+    private int newsId;
 
     public Stocks() {
     }
 
-    public Stocks(int id, String name, double openPrice, double closePrice, double highPrice, String date) {
+    public Stocks(int id, String name, double openPrice, double closePrice, double highPrice, String date, int newsId) {
         this.id = id;
         this.name = name;
         this.openPrice = openPrice;
         this.closePrice = closePrice;
         this.highPrice = highPrice;
         this.date = date;
+        this.newsId = newsId;
     }
 
     public int getId() {

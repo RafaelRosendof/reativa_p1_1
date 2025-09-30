@@ -1,52 +1,46 @@
 package com.DB.db.Entity;
 
-import javax.annotation.processing.Generated;
-
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToOne;
-import jakarta.persistence.Table;
-import jakarta.persistence.GenerationType;
 
 
-@Entity
-@Table(name = "news")
+import org.springframework.data.annotation.Id;
+import org.springframework.data.relational.core.mapping.Column;
+import org.springframework.data.relational.core.mapping.Table;
+
+
+
+
+@Table("news")
 public class News {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @Column(name = "font")
+    @Column("font")
     private String font;
     
-    @Column(name = "title")
+    @Column("title")
     private String title;
     
-    @Column(name = "description")
+    @Column("description")
     private String description;
     
-    @Column(name = "url")
+    @Column("url")
     private String url;
 
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "stock_id" , referencedColumnName = "id")
-    private Stocks stock;
+    
+    @Column("stock_id")
+    private int stockId; 
 
     public News() {
     }
 
-    public News(int id , String font, String title, String description, String url , Stocks stock) {
+    public News(int id , String font, String title, String description, String url , int stockId) {
         this.id = id;
         this.font = font;
         this.title = title;
         this.description = description;
         this.url = url;
-        this.stock = stock;
+        this.stockId = stockId;
     }
 
     public String getFont() {
@@ -77,12 +71,12 @@ public class News {
         this.url = url;
     }
 
-    public Stocks getStock() {
-        return stock;
+    public int getStockId() {
+        return stockId;
     }
 
-    public void setStock(Stocks stock) {
-        this.stock = stock;
+    public void setStockId(int stockId) {
+        this.stockId = stockId;
     }
 
     @Override

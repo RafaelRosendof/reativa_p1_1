@@ -72,3 +72,91 @@ public class StocksService {
 
 
 }
+
+/*
+package com.DB.db.Service;
+
+import com.DB.db.DAO.StockReactiveRepository;
+import com.DB.db.Entity.StocksReactive;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
+
+import java.util.List;
+
+@Service
+public class StockReactiveService {
+
+    private final StockReactiveRepository stockRepository;
+
+    @Autowired
+    public StockReactiveService(StockReactiveRepository stockRepository) {
+        this.stockRepository = stockRepository;
+    }
+
+    
+    public Mono<StocksReactive> findById(Integer id) {
+        return stockRepository.findById(id);
+    }
+
+    
+    public Mono<StocksReactive> saveStock(StocksReactive stock) {
+        return stockRepository.save(stock);
+    }
+
+    
+    public Mono<Boolean> deleteStock(Integer id) {
+        return stockRepository.findById(id)
+            .flatMap(stock -> stockRepository.delete(stock).thenReturn(true))
+            .defaultIfEmpty(false);
+    }
+
+    
+    public Mono<StocksReactive> updateStock(Integer id, StocksReactive newStock) {
+        return stockRepository.findById(id)
+            .flatMap(existingStock -> {
+                existingStock.setName(newStock.getName());
+                existingStock.setOpenPrice(newStock.getOpenPrice());
+                existingStock.setClosePrice(newStock.getClosePrice());
+                existingStock.setHighPrice(newStock.getHighPrice());
+                existingStock.setDate(newStock.getDate());
+                return stockRepository.save(existingStock);
+            });
+    }
+
+    
+    public Mono<StocksReactive> getStockByNameAndDate(String name, String date) {
+        return stockRepository.findByNameAndDate(name, date);
+    }
+
+    
+    public Mono<List<Double>> getStockValuesByName(String name, String date) {
+        return getStockByNameAndDate(name, date)
+            .map(stock -> List.of(
+                stock.getOpenPrice(),
+                stock.getClosePrice(),
+                stock.getHighPrice()
+            ))
+            .defaultIfEmpty(List.of());
+    }
+
+    
+    public Flux<StocksReactive> getAllStocks() {
+        return stockRepository.findAll();
+    }
+
+    
+    public Flux<StocksReactive> getTopStocksByClosePrice(int limit) {
+        return stockRepository.findAll()
+            .sort((s1, s2) -> Double.compare(s2.getClosePrice(), s1.getClosePrice()))
+            .take(limit);
+    }
+
+    
+    public Flux<StocksReactive> getStocksByDate(String date) {
+        return stockRepository.findByDate(date);
+    }
+}
+
+ */
