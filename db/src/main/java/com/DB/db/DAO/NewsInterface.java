@@ -24,6 +24,8 @@ public interface NewsInterface extends ReactiveCrudRepository<News, Integer> {
 
     Flux<News> findAllByStockId(int stockId);
 
+    Flux<News> findAllByFont(String font);
+
     // more latter
 
 

@@ -4,6 +4,8 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.Iterator;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -21,15 +23,28 @@ public class NewsCollect {
     @Value("${alphavantage.api.key}")
     private String apiKey;
 
+    private ArrayList<String> symbols = new ArrayList<>(Arrays.asList("AAPL", "MSFT", "GOOGL", "AMZN", "TSLA"));
+
     public String buildApiUrl(String typeOfTime , String symbol , String outputsize) {
         return "https://www.alphavantage.co/query?function=" + typeOfTime + "&symbol=" + symbol + "&outputsize=" + outputsize + "&apikey=" + apiKey + "&datatype=json";
     }
 
     public String collectData(String function, String symbol, String outputsize) {
 
+        
+
+
         String url = buildApiUrl(function, symbol, outputsize);
 
         try {
+
+            if (symbol == null || symbol.isEmpty() || !symbols.contains(symbol)) {
+             
+                System.err.println("Invalid or missing symbol. Valid symbols are: " + String.join(", ", symbols));
+                throw new IllegalArgumentException("Invalid or missing symbol");
+            }
+
+
             HttpClient client = HttpClient.newHttpClient();
             HttpRequest request = HttpRequest.newBuilder()
                 .uri(java.net.URI.create(url))

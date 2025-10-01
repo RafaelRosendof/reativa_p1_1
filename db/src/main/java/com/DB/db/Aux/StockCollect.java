@@ -7,10 +7,13 @@ import java.util.Iterator;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.web.reactive.function.client.WebClient;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+
+import reactor.core.publisher.Mono;
 
 
 @Service
@@ -24,6 +27,63 @@ public class StockCollect {
     public String buildApiUrl(String typeOfTime , String symbol , String outputsize) {
         return "https://www.alphavantage.co/query?function=" + typeOfTime + "&symbol=" + symbol + "&outputsize=" + outputsize + "&apikey=" + apiKey + "&datatype=json";
     }
+
+
+    // reactive calling a blocking method
+    public Mono<String> collectDataMono(String function, String symbol, String outputsize) {
+        return Mono.fromCallable(() -> collectData(function, symbol, outputsize));
+    }
+
+    //reactive calling a reactive method
+
+    public Mono<String> collectDataReactive(String funcion , String symbol , String outputsize){
+
+        String url = buildApiUrl(funcion, symbol, outputsize);
+
+        try{
+
+            WebClient webClient = WebClient.builder().baseUrl(url).build();
+
+            Mono<String> responseMono = webClient.get()
+                .retrieve()
+                .bodyToMono(String.class);
+
+            return responseMono.flatMap(responseBody -> {
+                try {
+
+                    ObjectMapper objectMapper = new ObjectMapper();
+                    JsonNode rootNode = objectMapper.readTree(responseBody);
+                    JsonNode timeSeriesNode = rootNode.path("Time Series (Daily)");
+
+                    ObjectNode resultJson = objectMapper.createObjectNode();
+                    ObjectNode filteredTimeSeries = objectMapper.createObjectNode();
+
+                    Iterator<String> dateKeys = timeSeriesNode.fieldNames();
+                    int count = 0;
+                    while (dateKeys.hasNext() && count < 10) {
+                        String date = dateKeys.next();
+                        filteredTimeSeries.set(date, timeSeriesNode.get(date));
+                        count++;
+                    }
+                    resultJson.set("Meta Data", rootNode.path("Meta Data"));
+                    resultJson.set("Time Series (Daily)", filteredTimeSeries);
+
+                    String prettyJson = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(resultJson);
+                    return Mono.just(prettyJson);
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    return Mono.empty();
+                }
+            });
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Mono.empty();
+        }
+
+    }
+
 
     public String collectData(String function, String symbol, String outputsize) {
 

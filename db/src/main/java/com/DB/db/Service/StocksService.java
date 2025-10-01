@@ -9,6 +9,9 @@ import com.DB.db.DAO.NewsInterface;
 import com.DB.db.DAO.StockInterface;
 import com.DB.db.Entity.Stocks;
 
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
+
 @Service
 public class StocksService {
 
@@ -22,49 +25,48 @@ public class StocksService {
     }
 
 
-    public Stocks findByID(int id) {
-        return stockInterface.findById(id).orElse(null);
+    public Mono<Stocks> findById(int id) {
+        return stockInterface.findById(id);
     }
 
-    public Stocks saveStock(Stocks stock) {
+    public Mono<Stocks> addStock(Stocks stock) {
         return stockInterface.save(stock);
     }
 
-    public boolean deleteStock(int id) {
-        
-        return stockInterface.findById(id).map(stock -> {
-            stockInterface.delete(stock);
-            return true;
-        }).orElse(false);
-
+    public void deleteStock(int id) {
+        stockInterface.deleteById(id).subscribe();
     }
 
-    public Stocks updateStock(int id , Stocks newStock) {
-        return stockInterface.findById(id).map(stock -> {
-            stock.setName(newStock.getName());
-            stock.setOpenPrice(newStock.getOpenPrice());
-            stock.setClosePrice(newStock.getClosePrice());
-            stock.setHighPrice(newStock.getHighPrice());
+    public Mono<Stocks> patchStock(int id, Stocks newStock) {
+        return stockInterface.findById(id).flatMap(stock -> {
+            if (newStock.getName() != null) {
+                stock.setName(newStock.getName());
+            }
+            if (newStock.getOpenPrice() != 0) {
+                stock.setOpenPrice(newStock.getOpenPrice());
+            }
+            if (newStock.getClosePrice() != 0) {
+                stock.setClosePrice(newStock.getClosePrice());
+            }
+            if (newStock.getHighPrice() != 0) {
+                stock.setHighPrice(newStock.getHighPrice());
+            }
+            if (newStock.getDate() != null) {
+                stock.setDate(newStock.getDate());
+            }
             return stockInterface.save(stock);
-        }).orElse(null);
+        });
     }
 
-    public Stocks getStockByName(String name , String date) {
-        return stockInterface.findAll().stream()
-                .filter(stock -> stock.getName().equalsIgnoreCase(name) && stock.getDate().equals(date))
-                .findFirst()
-                .orElse(null);
+    public Mono<Stocks> getStockBySymbol(String symbol) {
+        return stockInterface.findBySymbol(symbol);
     }
 
-    public List<Double> getStocksValueByName(String name , String date){
-        Stocks stock = getStockByName(name , date);
-        if(stock != null){
-            return List.of(stock.getOpenPrice(), stock.getClosePrice(), stock.getHighPrice());
-        }
-        return List.of();
+    public Flux<Stocks> getStocksByDate(String date) {
+        return stockInterface.findByDate(date);
     }
 
-    public List<Stocks> getAllStocks() {
+    public Flux<Stocks> getAllStocks() {
         return stockInterface.findAll();
     }
 
@@ -72,91 +74,3 @@ public class StocksService {
 
 
 }
-
-/*
-package com.DB.db.Service;
-
-import com.DB.db.DAO.StockReactiveRepository;
-import com.DB.db.Entity.StocksReactive;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import reactor.core.publisher.Flux;
-import reactor.core.publisher.Mono;
-
-import java.util.List;
-
-@Service
-public class StockReactiveService {
-
-    private final StockReactiveRepository stockRepository;
-
-    @Autowired
-    public StockReactiveService(StockReactiveRepository stockRepository) {
-        this.stockRepository = stockRepository;
-    }
-
-    
-    public Mono<StocksReactive> findById(Integer id) {
-        return stockRepository.findById(id);
-    }
-
-    
-    public Mono<StocksReactive> saveStock(StocksReactive stock) {
-        return stockRepository.save(stock);
-    }
-
-    
-    public Mono<Boolean> deleteStock(Integer id) {
-        return stockRepository.findById(id)
-            .flatMap(stock -> stockRepository.delete(stock).thenReturn(true))
-            .defaultIfEmpty(false);
-    }
-
-    
-    public Mono<StocksReactive> updateStock(Integer id, StocksReactive newStock) {
-        return stockRepository.findById(id)
-            .flatMap(existingStock -> {
-                existingStock.setName(newStock.getName());
-                existingStock.setOpenPrice(newStock.getOpenPrice());
-                existingStock.setClosePrice(newStock.getClosePrice());
-                existingStock.setHighPrice(newStock.getHighPrice());
-                existingStock.setDate(newStock.getDate());
-                return stockRepository.save(existingStock);
-            });
-    }
-
-    
-    public Mono<StocksReactive> getStockByNameAndDate(String name, String date) {
-        return stockRepository.findByNameAndDate(name, date);
-    }
-
-    
-    public Mono<List<Double>> getStockValuesByName(String name, String date) {
-        return getStockByNameAndDate(name, date)
-            .map(stock -> List.of(
-                stock.getOpenPrice(),
-                stock.getClosePrice(),
-                stock.getHighPrice()
-            ))
-            .defaultIfEmpty(List.of());
-    }
-
-    
-    public Flux<StocksReactive> getAllStocks() {
-        return stockRepository.findAll();
-    }
-
-    
-    public Flux<StocksReactive> getTopStocksByClosePrice(int limit) {
-        return stockRepository.findAll()
-            .sort((s1, s2) -> Double.compare(s2.getClosePrice(), s1.getClosePrice()))
-            .take(limit);
-    }
-
-    
-    public Flux<StocksReactive> getStocksByDate(String date) {
-        return stockRepository.findByDate(date);
-    }
-}
-
- */

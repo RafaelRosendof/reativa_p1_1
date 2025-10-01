@@ -9,6 +9,11 @@ import com.DB.db.Entity.News;
 import com.DB.db.DAO.NewsInterface;
 import com.DB.db.DAO.StockInterface;
 
+
+import reactor.core.publisher.Mono;
+import reactor.core.publisher.Flux;
+
+
 @Service
 public class NewsService {
 
@@ -21,49 +26,63 @@ public class NewsService {
         this.stockInterface = stockInterface;
     }
     
+    public Mono<News> findById(int id) {
+        return newsInterface.findById(id);
+    }
 
-    public News saveNews(News news) {
+    public Mono<News> addNews(News news) {
         return newsInterface.save(news);
     }
 
-    public News getNewsById(int id) {
-        return newsInterface.findById(id).orElse(null);
+    public void deleteNews(int id) {
+        newsInterface.deleteById(id).subscribe();
     }
 
-    public boolean deleteNews(int id) {
-        return newsInterface.findById(id).map(news -> {
-            newsInterface.delete(news);
-            return true;
-        }).orElse(false);
-    }
-
-    public News updateNews(int id , News newNews) {
-        return newsInterface.findById(id).map(news -> {
-            news.setFont(newNews.getFont());
-            news.setTitle(newNews.getTitle());
-            news.setDescription(newNews.getDescription());
-            news.setUrl(newNews.getUrl());
-            news.setStock(newNews.getStock());
+    public Mono<News> patchNews(int id, News newNews) {
+        return newsInterface.findById(id).flatMap(news -> {
+            if (newNews.getFont() != null) {
+                news.setFont(newNews.getFont());
+            }
+            if (newNews.getTitle() != null) {
+                news.setTitle(newNews.getTitle());
+            }
+            if (newNews.getDescription() != null) {
+                news.setDescription(newNews.getDescription());
+            }
+            if (newNews.getUrl() != null) {
+                news.setUrl(newNews.getUrl());
+            }
+            if (newNews.getStockId() != 0) {
+                news.setStockId(newNews.getStockId());
+            }
             return newsInterface.save(news);
-        }).orElse(null);
+        });
     }
 
-    public News getNewsByTitle(String title) {
-        return newsInterface.findAll().stream()
-                .filter(news -> news.getTitle().equalsIgnoreCase(title))
-                .findFirst()
-                .orElse(null);
+
+
+    public Mono<News> getNewsByTitle(String title) {
+        return newsInterface.findByTitle(title);
     }
 
-    public Iterable<News> getAllNews() {
+
+
+    public Flux<News> getAllNews() {
         return newsInterface.findAll();
     }
 
+    public Flux<News> getAllNewsByStockId(int stockId) {
+        return newsInterface.findAllByStockId(stockId);
+    }
 
-    public List<News> getNewsByStockId(int stockId) {
-        return newsInterface.findAll().stream()
-                .filter(news -> news.getStock() != null && news.getStock().getId() == stockId)
-                .toList();
+    public Flux<News> getAllNewsByStockName(String stockName) {
+        return stockInterface.findAllByName(stockName)
+                .flatMap(stock -> newsInterface.findAllByStockId(stock.getId()));
+    }
+
+
+    public Flux<News> getAllNewsByFont(String font) {
+        return newsInterface.findAllByFont(font);
     }
 
     // Basic methods is done, now going to be for scraping or api using
