@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import com.DB.db.DAO.NewsInterface;
 import com.DB.db.DAO.StockInterface;
 import com.DB.db.Entity.Stocks;
+import com.DB.db.Redis.RedisReactiveService;
 
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -16,18 +17,21 @@ import reactor.core.publisher.Mono;
 public class StocksService {
 
     public StockInterface stockInterface;
+    public RedisReactiveService redisService;
     public NewsInterface newsInterface;
 
     @Autowired
-    public StocksService(StockInterface stockInterface , NewsInterface newsInterface) {
+    public StocksService(StockInterface stockInterface , NewsInterface newsInterface, RedisReactiveService redisService) {
         this.stockInterface = stockInterface;
         this.newsInterface = newsInterface;
+        this.redisService = redisService;
     }
 
 
     public Mono<Stocks> findById(int id) {
         return stockInterface.findById(id);
     }
+    
 
     public Mono<Stocks> addStock(Stocks stock) {
         return stockInterface.save(stock);
@@ -62,12 +66,26 @@ public class StocksService {
         return stockInterface.findBySymbol(symbol);
     }
 
+    public Mono<Stocks> getStockByNameAndDate(String name , String date) {
+        return stockInterface.findByNameAndDate(name, date);
+    }
+
     public Flux<Stocks> getStocksByDate(String date) {
         return stockInterface.findByDate(date);
     }
 
     public Flux<Stocks> getAllStocks() {
         return stockInterface.findAll();
+    }
+
+    // Collect all the data from the redis 
+    public Flux<Stocks> getStocksFromRedis(){
+        return redisService.getAllCachedStocks();
+    }
+
+    // method to save the data in to postgres 
+    public void saveStocksToPostgres(Flux<Stocks> stocksList) {
+        stockInterface.saveAll(stocksList).subscribe(); // the method call a stream in the argument, maybe need to change it latter 
     }
 
     // done the basic methods, now gonne be for scraping or api using 

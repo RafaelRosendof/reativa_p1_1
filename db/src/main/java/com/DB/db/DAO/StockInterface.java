@@ -23,6 +23,8 @@ public interface StockInterface extends ReactiveCrudRepository<Stocks , Integer>
 
     Flux<Stocks> findAllByName(String name);
 
+    Mono<Stocks> findByNameAndDate(String name , String date);
+
     // more latter
     
 

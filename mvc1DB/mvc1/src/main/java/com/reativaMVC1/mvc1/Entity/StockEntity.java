@@ -1,48 +1,53 @@
-package com.DB.db.Entity;
+package com.reativaMVC1.mvc1.Entity;
 
+import jakarta.annotation.Generated;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
+import jakarta.persistence.Id;
+import jakarta.persistence.GenerationType;
 
-import org.springframework.data.annotation.Id;
-import org.springframework.data.relational.core.mapping.Column;
-import org.springframework.data.relational.core.mapping.Table;
-
-
-
-@Table("stocks")
-public class Stocks {
-
+@Entity
+@Table(name = "stock")
+public class StockEntity {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private int id;
 
-    @Column("name")
+    @Column(name = "name")
     private String name;
 
-    @Column("open_price")
+    @Column(name = "open_price")
     private double openPrice;
 
-    @Column("close_price")
+    @Column(name = "close_price")
     private double closePrice;
 
-    @Column("high_price")
+    @Column(name = "high_price")
     private double highPrice;
 
-    @Column("date")
+    @Column(name = "date")
     private String date;
 
-    @Column("news_id")
-    private int newsId;
+    //@Column(name = "news_id")
+    @OneToOne(mappedBy = "News")
+    private int news_id; //adjust here, foreign key to the news id
 
-    public Stocks() {
+    public StockEntity() {
     }
 
-    public Stocks(int id, String name, double openPrice, double closePrice, double highPrice, String date, int newsId) {
+    public StockEntity(int id, String name, double openPrice, double closePrice, double highPrice, String date, int news_id) {
         this.id = id;
         this.name = name;
         this.openPrice = openPrice;
         this.closePrice = closePrice;
         this.highPrice = highPrice;
         this.date = date;
-        this.newsId = newsId;
+        this.news_id = news_id;
     }
 
     public int getId() {
@@ -65,48 +70,41 @@ public class Stocks {
     public void setOpenPrice(double openPrice) {
         this.openPrice = openPrice;
     }
-
     public double getClosePrice() {
         return closePrice;
     }
-
     public void setClosePrice(double closePrice) {
         this.closePrice = closePrice;
     }
-
     public double getHighPrice() {
         return highPrice;
     }
-
     public void setHighPrice(double highPrice) {
         this.highPrice = highPrice;
     }
-
     public String getDate() {
         return date;
     }
-
     public void setDate(String date) {
         this.date = date;
     }
-
-    public int getNewsId() {
-        return newsId;
+    public int getNews_id() {
+        return news_id;
     }
-
-    public void setNewsId(int newsId) {
-        this.newsId = newsId;
+    public void setNews_id(int news_id) {
+        this.news_id = news_id;
     }
 
     @Override
     public String toString() {
-        return "Stocks{" +
+        return "StockEntity{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", openPrice=" + openPrice +
                 ", closePrice=" + closePrice +
                 ", highPrice=" + highPrice +
                 ", date='" + date + '\'' +
+                ", news_id=" + news_id +
                 '}';
     }
 
