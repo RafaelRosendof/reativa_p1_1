@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 
 import com.reativaMVC1.mvc1.DAO.NewsDAO;
 import com.reativaMVC1.mvc1.Entity.NewsEntity;
+import com.reativaMVC1.mvc1.Redis.RedisImperativeService;
 
 import java.util.List;
 
@@ -21,11 +22,13 @@ public class NewsService {
  
     private final NewsDAO newsDAO;
     private final NewsEntity newsEntity;
+    private final RedisImperativeService redisService;
 
     @Autowired
-    public NewsService(NewsDAO newsDAO, NewsEntity newsEntity) {
+    public NewsService(NewsDAO newsDAO, NewsEntity newsEntity, RedisImperativeService redisService) {
         this.newsDAO = newsDAO;
         this.newsEntity = newsEntity;
+        this.redisService = redisService;
     }
 
     public NewsEntity createNews(NewsEntity news) {
@@ -64,6 +67,29 @@ public class NewsService {
     }
 
     // Other methods for the redis service
-    
+
+    public String getNewsTop1(String stock){
+
+        String top1 = redisService.getTop2Request().get(0);
+
+        // chamando o aux 
+        return top1;
+
+    }
+
+    public String getNewsTop2(String stock){
+
+        String top2 = redisService.getTop2Request().get(1);
+
+        // chamando o aux
+        return top2;
+    }
+
+    public String giveBackPrompt(){
+        /*
+         * Methods to create the news and send back to MS1
+         */
+        return "This is a prompt";
+    }
 
 }
