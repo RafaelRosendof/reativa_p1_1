@@ -31,6 +31,18 @@ public class StockCollect {
         return "https://www.alphavantage.co/query?function=" + typeOfTime + "&symbol=" + symbol + "&outputsize=" + outputsize + "&apikey=" + apiKey + "&datatype=json";
     }
 
+
+/*
+        this.id = id;
+        this.name = name;
+        this.openPrice = openPrice;
+        this.closePrice = closePrice;
+        this.highPrice = highPrice;
+        this.date = date;
+        this.news_id = news_id;
+
+        news id can be faked for now like 1
+ */
     public String collectData(String symbol) {
 
         String url = buildApiUrl("TIME_SERIES_DAILY", symbol, "compact");

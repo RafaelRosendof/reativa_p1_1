@@ -7,6 +7,7 @@ import java.util.Iterator;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -30,6 +31,10 @@ public class NewsCollector {
     @Value("${alphavantage.api.key}")
     private String API_KEY;
 
+    @Autowired
+    public NewsCollector() {
+        this.API_KEY = API_KEY; 
+    }
 
     public String buildApiUrl(String symbol) {
         // Exemplo de URL com mais parâmetros para refinar a busca:
@@ -70,14 +75,20 @@ public class NewsCollector {
         }
     }
 
+    public String processNewsData(String stockSymbol){
+        String jsonData = fetchNewsData(stockSymbol);
+        String jsonFinal = parseAndPrintNews(jsonData);
+        return jsonFinal;
+    }
+
     /**
      * Processa a string JSON para extrair e imprimir informações úteis.
      * @param jsonData A string JSON retornada pela API.
      */
-    public void parseAndPrintNews(String jsonData) {
+    public String parseAndPrintNews(String jsonData) {
         if (jsonData == null || jsonData.isEmpty()) {
             System.out.println("Nenhum dado para processar.");
-            return;
+            return null;
         }
 
         Gson gson = new Gson();
@@ -88,13 +99,35 @@ public class NewsCollector {
         if (feed == null) {
             System.out.println("Nenhuma notícia encontrada no feed da API.");
             System.out.println("Resposta completa: " + jsonData);
-            return;
+            return null;
         }
 
         System.out.println("--- Notícias Encontradas para AAPL ---");
         
         // Itera sobre as 5 primeiras notícias (ou menos, se houver menos de 5)
+        StringBuilder newsBuilder = new StringBuilder();
         int newsToDisplay = Math.min(5, feed.size());
+        for (int i = 0; i < newsToDisplay; i++) {
+            JsonObject newsArticle = feed.get(i).getAsJsonObject();
+
+            String title = newsArticle.get("title").getAsString();
+            String summary = newsArticle.get("summary").getAsString();
+            String sentimentLabel = newsArticle.get("overall_sentiment_label").getAsString();
+
+            newsBuilder.append("\nNotícia ").append(i + 1).append(":")
+                       .append("\n  Título: ").append(title)
+                       .append("\n  Resumo: ").append(summary)
+                       .append("\n  Sentimento: ").append(sentimentLabel)
+                       .append("\n");
+        }
+        return newsBuilder.toString();
+    }
+
+}
+
+/*
+ * 
+int newsToDisplay = Math.min(5, feed.size());
         for (int i = 0; i < newsToDisplay; i++) {
             JsonObject newsArticle = feed.get(i).getAsJsonObject();
             
@@ -109,4 +142,5 @@ public class NewsCollector {
         }
     }
 
-}
+    return 
+ */

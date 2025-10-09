@@ -9,18 +9,22 @@ import org.springframework.stereotype.Controller;
 
 import com.reativaMVC1.mvc1.Entity.StockEntity;
 import com.reativaMVC1.mvc1.Redis.RedisImperativeService;
+import com.reativaMVC1.mvc1.Service.NewsService;
 import com.reativaMVC1.mvc1.Service.StocksService;
 
 @Controller
 public class GraphQl {
+
+    private final NewsService newsService;
     
     private final StocksService stocksService;
     private final RedisImperativeService redisService;
 
 
-    public GraphQl(StocksService stocksService, RedisImperativeService redisService) {
+    public GraphQl(StocksService stocksService, RedisImperativeService redisService, NewsService newsService) {
         this.stocksService = stocksService;
         this.redisService = redisService;
+        this.newsService = newsService;
     }
 
     @QueryMapping
@@ -51,11 +55,19 @@ public class GraphQl {
         return stocksService.giveBackStock1();
     }
 
-    
 
     @QueryMapping
     public List<StockEntity> giveToAIStocks2 (){
         return stocksService.giveBackStock2();
+    }
+
+
+    @QueryMapping
+    public String giveBackNews(){
+        String not1 = newsService.getNewsTop1();
+        String not2 = newsService.getNewsTop2();
+        return not1 + "\n" + not2;
+
     }
 
     @QueryMapping

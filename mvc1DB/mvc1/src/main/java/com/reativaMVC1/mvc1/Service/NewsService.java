@@ -3,6 +3,7 @@ package com.reativaMVC1.mvc1.Service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.reativaMVC1.mvc1.Aux.NewsCollector;
 import com.reativaMVC1.mvc1.DAO.NewsDAO;
 import com.reativaMVC1.mvc1.Entity.NewsEntity;
 import com.reativaMVC1.mvc1.Redis.RedisImperativeService;
@@ -23,6 +24,7 @@ public class NewsService {
     private final NewsDAO newsDAO;
     private final NewsEntity newsEntity;
     private final RedisImperativeService redisService;
+    private final NewsCollector newsCollector = new NewsCollector();
 
     @Autowired
     public NewsService(NewsDAO newsDAO, NewsEntity newsEntity, RedisImperativeService redisService) {
@@ -68,27 +70,38 @@ public class NewsService {
 
     // Other methods for the redis service
 
-    public String getNewsTop1(String stock){
+    public String createNews(String stock){
+
+        // função que vai retornar a notícia já pronta tudo feito ja  
+        return newsCollector.processNewsData(stock);
+    }
+
+    public String getNewsTop1(){
 
         String top1 = redisService.getTop2Request().get(0);
 
-        // chamando o aux 
-        return top1;
+        String news1 = createNews(top1);
+
+        System.out.println("News 1: " + news1);
+        
+        return news1;
 
     }
 
-    public String getNewsTop2(String stock){
+    public String getNewsTop2(){
 
         String top2 = redisService.getTop2Request().get(1);
 
-        // chamando o aux
-        return top2;
+        String news2 = createNews(top2);
+
+        System.out.println("News 1: " + news2);
+        
+        return news2;
+    
     }
 
     public String giveBackPrompt(){
-        /*
-         * Methods to create the news and send back to MS1
-         */
+        
         return "This is a prompt";
     }
 

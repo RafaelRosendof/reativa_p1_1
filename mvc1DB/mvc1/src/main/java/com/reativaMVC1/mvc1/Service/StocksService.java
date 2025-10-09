@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.reativaMVC1.mvc1.Aux.StockCollect;
 import com.reativaMVC1.mvc1.DAO.StockDAO;
 import com.reativaMVC1.mvc1.Entity.StockEntity;
 import com.reativaMVC1.mvc1.Redis.RedisImperativeService;
@@ -15,14 +16,16 @@ public class StocksService {
     private final StockDAO stockDAO;
     private final StockEntity stockEntity;
     private final RedisImperativeService redisService;
+    private final StockCollect stockCollect;
     private final NewsService newsService;
 
     @Autowired
-    public StocksService(StockDAO stockDAO, StockEntity stockEntity, RedisImperativeService redisService, NewsService newsService) {
+    public StocksService(StockDAO stockDAO, StockEntity stockEntity, RedisImperativeService redisService, NewsService newsService , StockCollect stockCollect) {
         this.stockDAO = stockDAO;
         this.stockEntity = stockEntity;
         this.redisService = redisService;
         this.newsService = newsService;
+        this.stockCollect = stockCollect;
     }
 
     public StockEntity findById(int id) {
@@ -78,7 +81,9 @@ public class StocksService {
          * 3. get the data here and in a for loop create a StockEntity for each day and save it in the database
          * 4. return the list of StockEntity
          */
-        return stockDAO.save(stockEntity); // for now
+        //return stockDAO.save(stockEntity); // for now
+        // the collectData need to be in StockEntity format 
+        List<StockEntity> stocks = stockCollect.collectData(stockName);
     }
 
     public List<StockEntity> giveBackStock1(){
