@@ -1,15 +1,16 @@
-package com.ms1Service.ms1;
+package com.gate.gateP1;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
+import org.springframework.cloud.netflix.eureka.server.EnableEurekaServer;
 
 @SpringBootApplication
-@EnableDiscoveryClient
-public class Ms1ServiceApplication {
+@EnableEurekaServer
+public class GateP1Application {
 
 	public static void main(String[] args) {
-		SpringApplication.run(Ms1ServiceApplication.class, args);
+		SpringApplication.run(GateP1Application.class, args);
 	}
 
 }

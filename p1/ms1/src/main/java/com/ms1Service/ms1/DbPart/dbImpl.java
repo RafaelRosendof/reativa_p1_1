@@ -40,6 +40,8 @@ public class dbImpl implements dbService {
 
             ResponseEntity<String> response = restTemplate.postForEntity(url, request, String.class);
 
+            System.out.println("Request sent to database-ms for symbol: " + symbol);
+
             if(response.getStatusCode().is2xxSuccessful()){
                 JsonNode root = objectMapper.readTree(response.getBody());
                 String resultMessage = root.path("data").path("requestStocking").asText();
