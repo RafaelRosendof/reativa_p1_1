@@ -17,7 +17,22 @@ public class GraphQl {
 
     @QueryMapping
     public String ChatWithGPT(String apiKey , String model){
-        return chatService.sendChatWithPrompt(apiKey, model);
+        //return chatService.sendChatWithPrompt(apiKey, model);
+        return "This method is deprecated. Use sendChatWithPrompt with prompt parameter instead.";
     }
+
+    // create the method getAnalysis
+    // now we gonna teste it
+    @QueryMapping
+    public String getAnalysis(){
+        System.out.println("\n\nReceived request for LLM analysis.\n\n");
+        return chatService.getAnalysis();
+    }
+
+    @QueryMapping
+    public String isAlive() {
+        return "MVC1IA is alive! viva figas \n\n\n\n";
+    }
+
 
 }

@@ -40,6 +40,7 @@ public class GraphQl {
 
     @QueryMapping
     public String stopRedis(){
+        System.out.println("\n\n Received stopRedis request in GraphQl controller. \n\n");
         return stocksService.stopRedis();
     }
 

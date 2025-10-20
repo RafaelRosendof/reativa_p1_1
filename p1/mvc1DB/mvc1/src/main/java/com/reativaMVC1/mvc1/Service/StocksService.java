@@ -101,6 +101,8 @@ public class StocksService {
 
     public String stopRedis(){
 
+        System.out.println("Is been here in the stopRedis method of StocksService");
+
         List<String> topStocks = redisService.getTop2Request();
         
         if(topStocks == null || topStocks.size() < 2){

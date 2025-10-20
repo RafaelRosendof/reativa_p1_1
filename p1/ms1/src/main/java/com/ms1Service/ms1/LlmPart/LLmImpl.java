@@ -26,15 +26,19 @@ public class LLmImpl implements llmService {
         
         try{
 
-            String url = "http://mvc1IA/graphql"; // modificar aqui
+            String url = "http://MVC1IA/graphql"; 
             String query = "query { getAnalysis }";
             String jsonPayload = String.format("{\"query\": \"%s\"}", query);
 
+            System.out.println("Sending GraphQL request to MVC1IA: " + jsonPayload);
+
             HttpHeaders headers = new HttpHeaders();
+
             headers.setContentType(org.springframework.http.MediaType.APPLICATION_JSON);
             HttpEntity<String> request = new HttpEntity<>(jsonPayload, headers);
 
             ResponseEntity<String> response = restTemplate.postForEntity(url, request, String.class);
+            
             if(response.getStatusCode().is2xxSuccessful()){
                 JsonNode root = objectMapper.readTree(response.getBody());
                 String resultMessage = root.path("data").path("getAnalysis").asText();
@@ -53,8 +57,36 @@ public class LLmImpl implements llmService {
 
     @Override
     public String getSummary() {
-        // Lógica para obter o resumo do LLM nop
-        return "Resumo do LLM";
+        
+        try{
+
+            String url = "http://MVC1IA/graphql"; 
+            String query = "query { isAlive }";
+            String jsonPayload = String.format("{\"query\": \"%s\"}", query);
+
+            System.out.println("Sending GraphQL request to MVC1IA: " + jsonPayload);
+
+            HttpHeaders headers = new HttpHeaders();
+
+            headers.setContentType(org.springframework.http.MediaType.APPLICATION_JSON);
+            HttpEntity<String> request = new HttpEntity<>(jsonPayload, headers);
+
+            ResponseEntity<String> response = restTemplate.postForEntity(url, request, String.class);
+            
+            if(response.getStatusCode().is2xxSuccessful()){
+                JsonNode root = objectMapper.readTree(response.getBody());
+                String resultMessage = root.path("data").path("getAnalysis").asText();
+                System.out.println("Response from llm-ms: " + resultMessage);
+                return resultMessage;
+            }
+        
+        }catch (Exception e){
+            e.printStackTrace();
+            return "Error: " + e.getMessage();
+        }
+
+
+        return "Análise do LLM";
     }
     
 }

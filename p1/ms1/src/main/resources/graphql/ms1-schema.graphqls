@@ -1,0 +1,15 @@
+# Defines the queries available from the ms1 service
+type Query {
+    # Triggers a request to cache a stock symbol
+    requestStock(symbol: String!): String
+
+    # Triggers a request to get an analysis from the LLM service
+    returnLLM: String
+
+    # Triggers a request to stop the Redis instance via the database service
+    stopRedis: String
+
+    isAlive: String
+
+    IAisAlive: String
+}

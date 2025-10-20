@@ -23,6 +23,8 @@ public class OpenAiService implements ChatService  {
     private final ObjectMapper objectMapper;
     private final RestTemplate restTemplate;
 
+    private final String api_key = "";
+
     private static final String OPENAI_API_URL = "https://api.openai.com/v1/chat/completions";
 
     // REVIEW THIS
@@ -41,7 +43,8 @@ public class OpenAiService implements ChatService  {
             String url_graphql = "http://database-ms/graphql";
             String graphQlQuery = "{ \"query\": \"query { giveBackToAIPrompt1 }\" }";
 
-            
+            System.out.println("\n\n Sending GraphQL request to database-ms: " + graphQlQuery + "\n\n");
+
             HttpHeaders headersGraphql = new HttpHeaders();
             headersGraphql.setContentType(org.springframework.http.MediaType.APPLICATION_JSON);
 
@@ -67,6 +70,20 @@ public class OpenAiService implements ChatService  {
         return null;
     
     }
+
+    @Override
+    public String getAnalysis() {
+
+        String data = getPrompt();
+
+        System.out.println("\n\n Data received in getAnalysis method: " + data + "\n\n");
+
+        String response = sendChatWithPrompt(data,  "gpt-4o-mini" , api_key);
+
+        return response;
+
+
+    }
     
 
     @Override
@@ -88,9 +105,9 @@ public class OpenAiService implements ChatService  {
     }
 
     @Override
-    public String sendChatWithPrompt(String apiKey , String model){
+    public String sendChatWithPrompt(String prompt , String apiKey , String model){
         
-        String prompt = getPrompt();
+        //String prompt = getPrompt();
 
         HttpClient httpClient = HttpClient.newHttpClient();
         HttpHeaders headers = new HttpHeaders();

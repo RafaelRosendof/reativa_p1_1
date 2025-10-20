@@ -5,6 +5,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.graphql.data.method.annotation.Argument;
 import org.springframework.web.client.RestTemplate;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -23,11 +24,11 @@ public class dbImpl implements dbService {
 
 
     @Override
-    public String saveRedisData(String symbol) {
+    public String saveRedisData(@Argument String symbol) {
         
         try{
 
-            String url = "http://mvc1/graphql"; // modificar aqui 
+            String url = "http://MVC1/graphql"; // modificar aqui 
             String query = String.format("query { requestStocking(name: \\\"%s\\\") }", symbol);
             String jsonPayload = String.format("{\"query\": \"%s\"}", query);
 
@@ -60,7 +61,7 @@ public class dbImpl implements dbService {
     public String getTop1Stock(){
         
         try{
-            String url = "http://mvc1/graphql"; // modificar aqui
+            String url = "http://MVC1/graphql";
             String query = "query { getTop1Stock}";
             String jsonPayload = String.format("{\"query\": \"%s\"}", query);
 
@@ -89,7 +90,7 @@ public class dbImpl implements dbService {
     @Override
     public String getTop2Stock(){
         try{
-            String url = "http://mvc1/graphql"; // modificar aqui
+            String url = "http://MVC1/graphql";
             String query = "query { getTop2Stock}";
             String jsonPayload = String.format("{\"query\": \"%s\"}", query);
 
@@ -118,7 +119,7 @@ public class dbImpl implements dbService {
     @Override
     public String stopRedis(){
         try{
-            String url = "http://mvc1/graphql"; // modificar aqui
+            String url = "http://MVC1/graphql";
             String query = "query { stopRedis}";
             String jsonPayload = String.format("{\"query\": \"%s\"}", query);
 
@@ -132,6 +133,7 @@ public class dbImpl implements dbService {
             if(response.getStatusCode().is2xxSuccessful()){
                 JsonNode root = objectMapper.readTree(response.getBody());
                 String stopRedis = root.path("data").path("stopRedis").asText();
+                System.out.println("Request sent to database-ms to stop Redis and process data.");
                 System.out.println("Stop Redis from database-ms: " + stopRedis);
                 return "Stop Redis: " + stopRedis;
             }

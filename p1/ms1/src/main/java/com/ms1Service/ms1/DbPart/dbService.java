@@ -1,5 +1,6 @@
 package com.ms1Service.ms1.DbPart;
 
+import org.springframework.graphql.data.method.annotation.Argument;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -7,7 +8,7 @@ import org.springframework.stereotype.Service;
 public interface dbService {
     
 
-    public String saveRedisData(String symbol);
+    public String saveRedisData(@Argument String symbol);
 
     public String getTop1Stock();
 
