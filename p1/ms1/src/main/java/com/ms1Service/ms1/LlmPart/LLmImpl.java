@@ -75,7 +75,7 @@ public class LLmImpl implements llmService {
             
             if(response.getStatusCode().is2xxSuccessful()){
                 JsonNode root = objectMapper.readTree(response.getBody());
-                String resultMessage = root.path("data").path("getAnalysis").asText();
+                String resultMessage = root.path("data").path("isAlive").asText();
                 System.out.println("Response from llm-ms: " + resultMessage);
                 return resultMessage;
             }

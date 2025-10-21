@@ -9,6 +9,8 @@ type Query {
     # Triggers a request to stop the Redis instance via the database service
     stopRedis: String
 
+    getAnalysis: String
+
     isAlive: String
 
     IAisAlive: String
