@@ -1,0 +1,7 @@
+type Query {
+
+  getAnalysis: String
+
+  isAlive: String
+
+}
