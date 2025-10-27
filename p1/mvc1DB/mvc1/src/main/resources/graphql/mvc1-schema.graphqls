@@ -10,4 +10,9 @@ type Query {
 
   """Stops the Redis instance"""
   stopRedis: String
+
+  giveBackToAIPrompt1: String 
+
+  giveBackToAIPrompt2: String
+  
 }

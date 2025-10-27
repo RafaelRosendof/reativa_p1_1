@@ -27,29 +27,7 @@ public class RestLLM {
         this.chatService = chatService;
     }
 
-    @PostMapping("/chat")
-    public ResponseEntity<Map<String,String>> chatWithLlm( @RequestBody String chatQuestion , @RequestHeader("Authorization") String apiKey ) {
-        
-        try{
-
-            if(apiKey.startsWith("Bearer ")){
-                apiKey = apiKey.substring(7);
-            }
-
-            //review this part 
-
-            //String prompt = chatService.getPrompt(chatQuestion.getTopics(), chatQuestion.getStocks());
-            String prompt = chatService.getPromptQuestion(chatQuestion);
-            System.out.println("Using prompt: " + prompt);
-            String response = chatService.sendChatWithPrompt(apiKey, model);
-            return ResponseEntity.ok(Map.of("analysis", response));
-
-        }catch(Exception e){
-            //return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error: " + e.getMessage());
-            return ResponseEntity.badRequest().body(Map.of("error", "Failed to analyze stocks: " + e.getMessage()));
-        }
-
-    }
+    
 
     @GetMapping("/isAlive")
     public ResponseEntity<Map<String , String>> isAliveGet(){

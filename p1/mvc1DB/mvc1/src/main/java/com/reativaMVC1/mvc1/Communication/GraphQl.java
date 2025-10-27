@@ -47,11 +47,13 @@ public class GraphQl {
 
     @QueryMapping
     public String giveBackToAIPrompt1(){
+        System.out.println("\n\n Received giveBackToAIPrompt1 request in GraphQl controller. \n\n");
         return stocksService.giveBackPrompt1();
     }
 
     @QueryMapping
     public String giveBackToAIPrompt2(){
+        System.out.println("\n\n Received giveBackToAIPrompt2 request in GraphQl controller. \n\n");
         return stocksService.giveBackPrompt2();
     }
 

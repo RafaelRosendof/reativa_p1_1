@@ -101,7 +101,7 @@ public class StocksService {
 
     public String stopRedis(){
 
-        System.out.println("Is been here in the stopRedis method of StocksService");
+        System.out.println("\n\n\nIs been here in the stopRedis method of StocksService\n\n\n");
 
         List<String> topStocks = redisService.getTop2Request();
         
@@ -127,7 +127,7 @@ public class StocksService {
          * 1. get the top 2 stocks from the redis
          * 2. get all the data from the database based on a stockName and the stockname is the top of the redis function getTop2Request
          */
-
+        System.out.println("\n\n\n Is been here in the giveBackStock1 method of StocksService\n\n\n");
         String stock1 = redisService.getTop2Request().get(0);
         System.out.println("Top requested stock 1: " + stock1);
 
@@ -139,6 +139,7 @@ public class StocksService {
          * 1. get the top 2 stocks from the redis
          * 2. get all the data from the database based on a stockName and the stockname is the top of the redis function getTop2Request
          */
+        System.out.println("\n\n\n Is been here in the giveBackStock2 method of StocksService\n\n\n");
         String stock2 = redisService.getTop2Request().get(1);
         System.out.println("Top requested stock 2: " + stock2);
 

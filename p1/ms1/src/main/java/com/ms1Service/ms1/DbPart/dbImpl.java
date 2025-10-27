@@ -120,7 +120,7 @@ public class dbImpl implements dbService {
     public String stopRedis(){
         try{
             String url = "http://MVC1/graphql";
-            String query = "query { stopRedis}";
+            String query = "query { stopRedis }";
             String jsonPayload = String.format("{\"query\": \"%s\"}", query);
 
             HttpHeaders headers = new HttpHeaders();

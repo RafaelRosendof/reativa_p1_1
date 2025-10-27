@@ -11,7 +11,7 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.HttpHeaders;
-
+import org.springframework.beans.factory.annotation.Qualifier;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.reativaMVCIA.mvc1.prompt.PromptService;
@@ -21,17 +21,24 @@ public class OpenAiService implements ChatService  {
     
     private final PromptService promptService;
     private final ObjectMapper objectMapper;
-    private final RestTemplate restTemplate;
+    //private final RestTemplate restTemplate;
+
+    private final RestTemplate internalRestTemplate;
+    private final RestTemplate externalRestTemplate;
 
     private final String api_key = "";
 
     private static final String OPENAI_API_URL = "https://api.openai.com/v1/chat/completions";
+    //String url = "https://api.openai.com/v1/chat/completions";
 
     // REVIEW THIS
 
     @Autowired
-    public OpenAiService(RestTemplate restTemplate, PromptService promptService, ObjectMapper objectMapper) {
-        this.restTemplate = restTemplate;
+    public OpenAiService(@Qualifier("internalRestTemplate") RestTemplate internalRestTemplate,
+                         @Qualifier("externalRestTemplate") RestTemplate externalRestTemplate,
+                         PromptService promptService, ObjectMapper objectMapper) {
+        this.internalRestTemplate = internalRestTemplate;
+        this.externalRestTemplate = externalRestTemplate;
         this.promptService = promptService;
         this.objectMapper = objectMapper;
     }
@@ -40,21 +47,24 @@ public class OpenAiService implements ChatService  {
     public String sendGraphQLToDb(){
         try{
 
-            String url_graphql = "http://database-ms/graphql";
-            String graphQlQuery = "{ \"query\": \"query { giveBackToAIPrompt1 }\" }";
+            String url_graphql = "http://MVC1/graphql";
+            String graphQlQuery = "query { giveBackToAIPrompt1 }";
+            String jsonPayload = String.format("{\"query\": \"%s\"}", graphQlQuery);
 
-            System.out.println("\n\n Sending GraphQL request to database-ms: " + graphQlQuery + "\n\n");
 
-            HttpHeaders headersGraphql = new HttpHeaders();
-            headersGraphql.setContentType(org.springframework.http.MediaType.APPLICATION_JSON);
+            System.out.println("\n\n Sending GraphQL request to database ms: " + graphQlQuery + "\n\n");
 
-            HttpEntity<String> request = new HttpEntity<>(graphQlQuery, headersGraphql);
-            ResponseEntity<String> response = restTemplate.postForEntity(url_graphql, request, String.class);
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(org.springframework.http.MediaType.APPLICATION_JSON);
+
+            HttpEntity<String> request = new HttpEntity<>(jsonPayload, headers);
+
+            ResponseEntity<String> response = internalRestTemplate.postForEntity(url_graphql, request, String.class);
 
 
             if (response.getStatusCode().is2xxSuccessful()) {
-                ObjectMapper mapper = new ObjectMapper();
-                JsonNode root = mapper.readTree(response.getBody());
+                System.out.println("GraphQL response received successfully.");
+                JsonNode root = objectMapper.readTree(response.getBody());
                 String promptQL = root.path("data").path("giveBackToAIPrompt1").asText();
                 System.out.println("Prompt from GraphQL: " + promptQL);
 
@@ -78,7 +88,7 @@ public class OpenAiService implements ChatService  {
 
         System.out.println("\n\n Data received in getAnalysis method: " + data + "\n\n");
 
-        String response = sendChatWithPrompt(data,  "gpt-4o-mini" , api_key);
+        String response = sendChatWithPrompt(data, api_key , "gpt-4o-mini" );
 
         return response;
 
@@ -106,20 +116,22 @@ public class OpenAiService implements ChatService  {
 
     @Override
     public String sendChatWithPrompt(String prompt , String apiKey , String model){
-        
-        //String prompt = getPrompt();
 
-        HttpClient httpClient = HttpClient.newHttpClient();
+        
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "Bearer " + apiKey);
         headers.set("Content-Type", "application/json");
-        String requestBody = String.format(
-            "{ \"model\": \"%s\", \"messages\": [ { \"role\": \"user\", \"content\": \"%s\" } ] }",
-            model, prompt.replace("\"", "\\\"")
-        );
 
-        HttpEntity<String> request = new HttpEntity<>(requestBody, headers);
-        ResponseEntity<String> response = restTemplate.postForEntity(OPENAI_API_URL, request, String.class);
+
+        OpenAIMessage userMessage = new OpenAIMessage("user", prompt);
+        OpenAIChatReq chatRequest = new OpenAIChatReq(model, List.of(userMessage));
+
+        HttpEntity<OpenAIChatReq> request = new HttpEntity<>(chatRequest, headers);
+        ResponseEntity<String> response = externalRestTemplate.postForEntity(
+            OPENAI_API_URL, 
+            request, 
+            String.class
+        );
 
         if (response.getStatusCode().is2xxSuccessful()) {
             return response.getBody();
