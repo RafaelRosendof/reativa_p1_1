@@ -1,0 +1,18 @@
+type Query {
+  """Saves/caches the requested stock"""
+  requestStocking(name: String!): String
+
+  """Gets the top 1 stock"""
+  getTop1Stock: String
+
+  """Gets the top 2 stock"""
+  getTop2Stock: String
+
+  """Stops the Redis instance"""
+  stopRedis: String
+
+  giveBackToAIPrompt1: String
+
+  giveBackToAIPrompt2: String
+  
+}

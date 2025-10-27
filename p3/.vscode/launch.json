@@ -1,0 +1,50 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        
+        {
+            "type": "java",
+            "name": "Current File",
+            "request": "launch",
+            "mainClass": "${file}"
+        },
+        {
+            "type": "java",
+            "name": "EurekaApplication",
+            "request": "launch",
+            "mainClass": "com.eureka.eureka.EurekaApplication",
+            "projectName": "eureka"
+        },
+        {
+            "type": "java",
+            "name": "GateApplication",
+            "request": "launch",
+            "mainClass": "com.gate.gate.GateApplication",
+            "projectName": "gate"
+        },
+        {
+            "type": "java",
+            "name": "Ms1Application",
+            "request": "launch",
+            "mainClass": "com.reativa.ms1.Ms1Application",
+            "projectName": "ms1"
+        },
+        {
+            "type": "java",
+            "name": "Mvc1IaApplication",
+            "request": "launch",
+            "mainClass": "com.reativaMVCIA.mvc1.Mvc1IaApplication",
+            "projectName": "mvc1"
+        },
+        {
+            "type": "java",
+            "name": "DbApplication",
+            "request": "launch",
+            "mainClass": "com.reativa.part.DbApplication",
+            "projectName": "part"
+        }
+    ]
+}
